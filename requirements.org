@@ -36,7 +36,7 @@
    - [ ] httpclient can handle 404 requests and 200 requests
 
 ** Restrictions
-   - [ ] Use Python 2.7
+   - [ ] Use Python 3
    - [ ] Must run in the undergrad lab (Ubuntu 12.04)
    - [ ] License your httpclient properly (use an OSI approved license)
      - Put your name on it!

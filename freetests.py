@@ -16,16 +16,16 @@
 #
 # run python freetests.py
 
-import urllib2
+import urllib
 import unittest
 import httpclient
-import BaseHTTPServer
-import thread
-import SocketServer
+import http.server as BaseHTTPServer
+import _thread as thread
+import socketserver as SocketServer
 import random
-import StringIO
+from io import StringIO
 import time
-import urlparse
+from urllib.parse import urlparse
 import json
 
 BASEHOST = '127.0.0.1'
@@ -47,7 +47,7 @@ class MyHTTPHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             else:
                 return self.post()
         except Exception as e:
-            print "Exception %s\n" % e
+            print ("Exception %s\n"%e)
             raise e
 
     def do_GET(self):
@@ -58,7 +58,7 @@ class MyHTTPHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             else:
                 return self.get()
         except Exception as e:
-            print "Exception %s\n" % e
+            print ("Exception %s\n"%e)
             raise e
 
 def make_http_server(host = BASEHOST, port = BASEPORT):
@@ -137,8 +137,8 @@ class TestHTTPClient(unittest.TestCase):
                 self.thread = thread.start_new_thread(self.run_server,())#, tuple([self]))
                 time.sleep(1)
             except Exception as e:
-                print e
-                print "setUP: Thread died"
+                print(e)
+                print ("setUP: Thread died")
                 raise e
 
     @classmethod
@@ -149,12 +149,12 @@ class TestHTTPClient(unittest.TestCase):
             BaseHTTPServer.allow_reuse_address = True
             BaseHTTPServer.HTTPServer.allow_reuse_address = True
             TestHTTPClient.httpd = make_http_server()
-            print "HTTP UP!\n"
+            print ("HTTP UP!\n")
             TestHTTPClient.httpd.serve_forever()
-            print "HTTP has been shutdown!\n"
+            print ("HTTP has been shutdown!\n")
         except Exception as e:
-            print e
-            print "run_server: Thread died"
+            print (e)
+            print ("run_server: Thread died")
 
 
 
@@ -225,7 +225,7 @@ class TestHTTPClient(unittest.TestCase):
             try:
                 req = http.GET( url )
             except Exception as e:
-                print "An Exception was thrown for %s" % url
+                print ("An Exception was thrown for %s"%url)
                 self.assertTrue( False, "An Exception was thrown for %s %s" % (url,e))
             self.assertTrue(req != None, "None Returned! %s" % url)
             self.assertTrue(req.code == 200 or 
@@ -247,13 +247,13 @@ class TestHTTPClient(unittest.TestCase):
                 'b':'bbbbbbbbbbbbbbbbbbbbbb',
                 'c':'c',
                 'd':'012345\r67890\n2321321\n\r'}
-        print "Sending POST!"
+        print ("Sending POST!")
         req = http.POST( url, args=args )
         self.assertTrue(req != None, "None Returned!")
         self.assertTrue(req.code == 200)
-        print "Body: [%s]" % req.body
+        print ("Body: [%s]" % req.body)
         outargs = json.loads(req.body)
-        print outargs.__class__
+        print (outargs.__class__)
         for key in args:
             self.assertTrue(args[key] == outargs[key][0], "Key [%s] not found" % key)
         for key in outargs:
@@ -262,13 +262,13 @@ class TestHTTPClient(unittest.TestCase):
     @classmethod
     def tearDownClass(self):        
         if (TestHTTPClient.httpd!=None):
-            print "HTTP Shutdown in tearDown\n"
+            print ("HTTP Shutdown in tearDown\n")
             TestHTTPClient.httpd.shutdown()
             TestHTTPClient.httpd.server_close()
             time.sleep(1)
 
 def test_test_webserver():
-    print("http://%s:%d/dsadsadsadsa\n" % (BASEHOST,BASEPORT) )
+    print("http://%s:%d/dsadsadsadsa\n"%(BASEHOST,BASEPORT))
     MyHTTPHandler.get = echo_path_get
     MyHTTPHandler.post = echo_post
     httpd = make_http_server()
