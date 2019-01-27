@@ -63,7 +63,7 @@
    - To mark your assignment I should be able to type:
     : git clone http://github.com/youruserid/thisassignment.git yourccid
     : cd yourccid
-    : python freetests.py
+    : python3 freetests.py
 
    - Marks will be deducted if I cannot successfully do this.
      

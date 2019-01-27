@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# run python freetests.py
+# run python3 freetests.py
 
 import urllib
 import unittest
