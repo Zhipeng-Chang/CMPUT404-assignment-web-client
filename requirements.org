@@ -13,7 +13,7 @@
      own source code.
    - Collaboration must be documented in the README.md file
    - Any external source code must be referenced and documented in
-     the README.md file
+     the httpclient.py file
 
 ** User Stories
    - As a user I want to GET from URLs
@@ -37,11 +37,12 @@
 
 ** Restrictions
    - [ ] Use Python 3
-   - [ ] Must run in the undergrad lab (Ubuntu 12.04)
+   - [ ] Must run in the undergrad lab (Ubuntu 16.04)
    - [ ] License your httpclient properly (use an OSI approved license)
      - Put your name on it!
    - [ ] You cannot use a Web Client library except for urllib utils
      to convert strings to url-encode and query-string format and back
+      - urllib.request is BANNED
    - [ ] You should use the socket library that comes with python
 
 ** Recommendations
@@ -51,19 +52,11 @@
    - It's a good idea to send the Host header in a GET or POST
 
 ** Submission Instructions
-   - Fork my repository from github
-     https://github.com/abramhindle/CMPUT404-assignment-web-client
-   - Push your commits to your fork
-   - In EClass for this assignment submit a URL to the git
-     repository. I would prefer github for the host.
-     - Line 1: the git URL
-     - Line 2: Your CCID
-     - Line 3: Your collaborator's CCID
+   - Upload your version of httpclient.py to eClass.
 
    - To mark your assignment I should be able to type:
-    : git clone http://github.com/youruserid/thisassignment.git yourccid
-    : cd yourccid
-    : python3 freetests.py
+    : python freetests.py
+    with your version of httpclient.py in the same directory and it should run.
 
    - Marks will be deducted if I cannot successfully do this.
      
