@@ -18,11 +18,14 @@
 # Write your own HTTP GET and POST
 # The point is to understand what you have to send and get experience with it
 
+# python3 httpclient.py GET http://www.cs.ualberta.ca/
+
+# Reference: https://docs.python.org/3/library/urllib.parse.html
 import sys
 import socket
 import re
 # you may use urllib to encode data appropriately
-import urllib.parse
+from urllib.parse import urlparse, urlencode
 
 def help():
     print("httpclient.py [GET/POST] [URL]\n")
@@ -33,7 +36,16 @@ class HTTPResponse(object):
         self.body = body
 
 class HTTPClient(object):
-    #def get_host_port(self,url):
+    def get_host_port(self,url):
+        parsedUrl = urlparse(url)
+        host = parsedUrl.hostname
+        port = parsedUrl.port
+        path_and_more = url.replace(parsedUrl.scheme+"://"+parsedUrl.netloc,"")
+
+        if port is None:
+            port = 80
+
+        return host, port, path_and_more
 
     def connect(self, host, port):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -70,6 +82,7 @@ class HTTPClient(object):
     def GET(self, url, args=None):
         code = 500
         body = ""
+        host, port, path_and_more = self.get_host_port(url)
         return HTTPResponse(code, body)
 
     def POST(self, url, args=None):
