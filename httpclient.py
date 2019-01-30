@@ -25,6 +25,7 @@
 # python3 httpclient.py GET http://slashdot.org
 
 # Reference: https://docs.python.org/3/library/urllib.parse.html
+
 import sys
 import socket
 import re
@@ -89,8 +90,6 @@ class HTTPClient(object):
         return buffer.decode('utf-8')
 
     def GET(self, url, args=None):
-        code = 500
-        body = ""
         host, port, path_and_more = self.get_host_port(url)
         try:
             self.connect(host, port)
@@ -101,13 +100,12 @@ class HTTPClient(object):
             body = self.get_body(meg)
             print(meg)
             return HTTPResponse(code, body)
+
         except Exception as e:
             return HTTPResponse(404)
 
 
     def POST(self, url, args=None):
-        code = 500
-        body = ""
         var_arg=""
         host, port, path_and_more = self.get_host_port(url)
         try:
@@ -121,6 +119,7 @@ class HTTPClient(object):
             body = self.get_body(meg)
             print(meg)
             return HTTPResponse(code, body)
+
         except Exception as e:
             return HTTPResponse(404)
 
