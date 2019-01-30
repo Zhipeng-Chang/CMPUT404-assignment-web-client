@@ -20,6 +20,8 @@
 
 # python3 httpclient.py GET http://www.cs.ualberta.ca/
 
+# python3 httpclient.py POST http://EFWEFWE/49872398432
+
 # Reference: https://docs.python.org/3/library/urllib.parse.html
 import sys
 import socket
@@ -32,7 +34,7 @@ def help():
 
 class HTTPResponse(object):
     def __init__(self, code=200, body=""):
-        self.code = code
+        self.code = int(code)
         self.body = body
 
 class HTTPClient(object):
@@ -53,13 +55,16 @@ class HTTPClient(object):
         return None
 
     def get_code(self, data):
-        return None
+        code = data.splitlines()[0].split(" ")[1]
+        return code
 
     def get_headers(self,data):
         return None
 
     def get_body(self, data):
-        return None
+        body = data.split('\r\n\r\n')[1]
+        print(body)
+        return body
     
     def sendall(self, data):
         self.socket.sendall(data.encode('utf-8'))
@@ -83,12 +88,38 @@ class HTTPClient(object):
         code = 500
         body = ""
         host, port, path_and_more = self.get_host_port(url)
-        return HTTPResponse(code, body)
+        try:
+            self.connect(host, port)
+            request_body = ('GET %s HTTP/1.1\r\nHost: %s \r\n\r\n'%(path_and_more, host))
+            self.sendall(request_body)
+            meg = self.recvall(self.socket)
+            code = self.get_code(meg)
+            body = self.get_body(meg)
+            print(meg)
+            return HTTPResponse(code, body)
+        except Exception as e:
+            return HTTPResponse(404)
+
 
     def POST(self, url, args=None):
         code = 500
         body = ""
-        return HTTPResponse(code, body)
+        var_arg=""
+        host, port, path_and_more = self.get_host_port(url)
+        try:
+            self.connect(host, port)
+            if args is not None:
+                var_arg = urlencode(args)
+            request_body = ('POST %s HTTP/1.1\r\nHost: %s \r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length:%s\r\n\r\n%s'%(path_and_more, host, str(len(var_arg)),var_arg))
+            print("testing: request_body %s\n"%request_body)
+            self.sendall(request_body)
+            meg = self.recvall(self.socket)
+            code = self.get_code(meg)
+            body = self.get_body(meg)
+            print(meg)
+            return HTTPResponse(code, body)
+        except Exception as e:
+            return HTTPResponse(404)
 
     def command(self, url, command="GET", args=None):
         if (command == "POST"):
