@@ -39,16 +39,12 @@ class HTTPClient(object):
         parsedUrl = urlparse(url)
         host = parsedUrl.hostname
         port = parsedUrl.port
-        path_and_more = url.replace(parsedUrl.scheme+"://"+parsedUrl.netloc,"")
 
         if port is None:
             # Reference: https://eclass.srv.ualberta.ca/pluginfile.php/4549769/mod_resource/content/2/04-HTTP.pdf
             port = 80
 
-        if len(path_and_more) == 0:
-            path_and_more = "/"
-
-        return host, port, path_and_more
+        return host, port
 
     def connect(self, host, port):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -85,15 +81,19 @@ class HTTPClient(object):
         return buffer.decode('utf-8')
 
     def GET(self, url, args=None):
-        host, port, path_and_more = self.get_host_port(url)
+        host, port = self.get_host_port(url)
+        path_and_more = url.replace(urlparse(url).scheme+"://"+urlparse(url).netloc,"")
+        if len(path_and_more) == 0:
+            path_and_more = "/"
+
         try:
             self.connect(host, port)
             request_body = ('GET %s HTTP/1.1\r\nHost: %s \r\n\r\n'%(path_and_more, host))
             self.sendall(request_body)
-            meg = self.recvall(self.socket)
-            code = int(self.get_code(meg))
-            body = self.get_body(meg)
-            print(meg)
+            data = self.recvall(self.socket)
+            code = int(self.get_code(data))
+            body = self.get_body(data)
+            print(data)
             return HTTPResponse(code, body)
 
         except Exception as e:
@@ -102,17 +102,21 @@ class HTTPClient(object):
 
     def POST(self, url, args=None):
         var_arg=""
-        host, port, path_and_more = self.get_host_port(url)
+        host, port = self.get_host_port(url)
+        path_and_more = url.replace(urlparse(url).scheme+"://"+urlparse(url).netloc,"")
+        if len(path_and_more) == 0:
+            path_and_more = "/"
+
         try:
             self.connect(host, port)
             if args is not None:
                 var_arg = urlencode(args)
             request_body = ('POST %s HTTP/1.1\r\nHost: %s \r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length:%s\r\n\r\n%s'%(path_and_more, host, str(len(var_arg)),var_arg))
             self.sendall(request_body)
-            meg = self.recvall(self.socket)
-            code = int(self.get_code(meg))
-            body = self.get_body(meg)
-            print(meg)
+            data = self.recvall(self.socket)
+            code = int(self.get_code(data))
+            body = self.get_body(data)
+            print(data)
             return HTTPResponse(code, body)
 
         except Exception as e:
