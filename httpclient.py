@@ -82,13 +82,13 @@ class HTTPClient(object):
 
     def GET(self, url, args=None):
         host, port = self.get_host_port(url)
-        path_and_more = url.replace(urlparse(url).scheme+"://"+urlparse(url).netloc,"")
-        if len(path_and_more) == 0:
-            path_and_more = "/"
+        path = url.replace(urlparse(url).scheme+"://"+urlparse(url).netloc,"")
+        if len(path) == 0:
+            path = "/"
 
         try:
             self.connect(host, port)
-            request_body = ('GET %s HTTP/1.1\r\nHost: %s \r\n\r\n'%(path_and_more, host))
+            request_body = ('GET %s HTTP/1.1\r\nHost: %s \r\n\r\n'%(path, host))
             self.sendall(request_body)
             data = self.recvall(self.socket)
             code = int(self.get_code(data))
@@ -103,15 +103,15 @@ class HTTPClient(object):
     def POST(self, url, args=None):
         var_arg=""
         host, port = self.get_host_port(url)
-        path_and_more = url.replace(urlparse(url).scheme+"://"+urlparse(url).netloc,"")
-        if len(path_and_more) == 0:
-            path_and_more = "/"
+        path = url.replace(urlparse(url).scheme+"://"+urlparse(url).netloc,"")
+        if len(path) == 0:
+            path = "/"
 
         try:
             self.connect(host, port)
             if args is not None:
                 var_arg = urlencode(args)
-            request_body = ('POST %s HTTP/1.1\r\nHost: %s \r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length:%s\r\n\r\n%s'%(path_and_more, host, str(len(var_arg)),var_arg))
+            request_body = ('POST %s HTTP/1.1\r\nHost: %s \r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length:%s\r\n\r\n%s'%(path, host, str(len(var_arg)),var_arg))
             self.sendall(request_body)
             data = self.recvall(self.socket)
             code = int(self.get_code(data))
