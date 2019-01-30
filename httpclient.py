@@ -18,12 +18,6 @@
 # Write your own HTTP GET and POST
 # The point is to understand what you have to send and get experience with it
 
-# python3 httpclient.py GET http://www.cs.ualberta.ca/
-
-# python3 httpclient.py POST http://EFWEFWE/49872398432
-
-# python3 httpclient.py GET http://slashdot.org
-
 # Reference: https://docs.python.org/3/library/urllib.parse.html
 
 import sys
@@ -37,7 +31,7 @@ def help():
 
 class HTTPResponse(object):
     def __init__(self, code=200, body=""):
-        self.code = int(code)
+        self.code = code
         self.body = body
 
 class HTTPClient(object):
@@ -48,6 +42,7 @@ class HTTPClient(object):
         path_and_more = url.replace(parsedUrl.scheme+"://"+parsedUrl.netloc,"")
 
         if port is None:
+            # Reference: https://eclass.srv.ualberta.ca/pluginfile.php/4549769/mod_resource/content/2/04-HTTP.pdf
             port = 80
 
         if len(path_and_more) == 0:
@@ -96,7 +91,7 @@ class HTTPClient(object):
             request_body = ('GET %s HTTP/1.1\r\nHost: %s \r\n\r\n'%(path_and_more, host))
             self.sendall(request_body)
             meg = self.recvall(self.socket)
-            code = self.get_code(meg)
+            code = int(self.get_code(meg))
             body = self.get_body(meg)
             print(meg)
             return HTTPResponse(code, body)
@@ -115,7 +110,7 @@ class HTTPClient(object):
             request_body = ('POST %s HTTP/1.1\r\nHost: %s \r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length:%s\r\n\r\n%s'%(path_and_more, host, str(len(var_arg)),var_arg))
             self.sendall(request_body)
             meg = self.recvall(self.socket)
-            code = self.get_code(meg)
+            code = int(self.get_code(meg))
             body = self.get_body(meg)
             print(meg)
             return HTTPResponse(code, body)
