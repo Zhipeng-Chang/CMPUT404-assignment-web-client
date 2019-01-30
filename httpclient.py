@@ -22,6 +22,8 @@
 
 # python3 httpclient.py POST http://EFWEFWE/49872398432
 
+# python3 httpclient.py GET http://slashdot.org
+
 # Reference: https://docs.python.org/3/library/urllib.parse.html
 import sys
 import socket
@@ -47,6 +49,9 @@ class HTTPClient(object):
         if port is None:
             port = 80
 
+        if len(path_and_more) == 0:
+            path_and_more = "/"
+
         return host, port, path_and_more
 
     def connect(self, host, port):
@@ -63,7 +68,6 @@ class HTTPClient(object):
 
     def get_body(self, data):
         body = data.split('\r\n\r\n')[1]
-        print(body)
         return body
     
     def sendall(self, data):
@@ -111,7 +115,6 @@ class HTTPClient(object):
             if args is not None:
                 var_arg = urlencode(args)
             request_body = ('POST %s HTTP/1.1\r\nHost: %s \r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length:%s\r\n\r\n%s'%(path_and_more, host, str(len(var_arg)),var_arg))
-            print("testing: request_body %s\n"%request_body)
             self.sendall(request_body)
             meg = self.recvall(self.socket)
             code = self.get_code(meg)
