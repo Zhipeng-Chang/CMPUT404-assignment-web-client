@@ -50,7 +50,6 @@ class HTTPClient(object):
         return host, port
 
     def connect(self, host, port):
-        print("host: %s\n"%host)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect((host, port))
         return None
