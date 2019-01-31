@@ -26,6 +26,9 @@ import re
 # you may use urllib to encode data appropriately
 from urllib.parse import urlparse, urlencode
 
+USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko)'
+
+
 def help():
     print("httpclient.py [GET/POST] [URL]\n")
 
@@ -95,7 +98,7 @@ class HTTPClient(object):
 
         try:
             self.connect(host, port)
-            request_body = ('GET %s HTTP/1.1\r\nHost: %s \r\nConnection: close\r\n\r\n'%(path, host))
+            request_body = ('GET %s HTTP/1.1\r\nUser-Agent: %s\r\nHost: %s \r\nConnection: close\r\n\r\n'%(path, USER_AGENT, host))
             self.sendall(request_body)
             data = self.recvall(self.socket)
             code = int(self.get_code(data))
@@ -116,7 +119,7 @@ class HTTPClient(object):
             self.connect(host, port)
             if args is not None:
                 var_arg = urlencode(args)
-            request_body = ('POST %s HTTP/1.1\r\nHost: %s \r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length:%s\r\nConnection: close\r\n\r\n%s'%(path, host, str(len(var_arg)),var_arg))
+            request_body = ('POST %s HTTP/1.1\r\nUser-Agent: %s\r\nHost: %s \r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length:%s\r\nConnection: close\r\n\r\n%s'%(path, USER_AGENT, host, str(len(var_arg)),var_arg))
             self.sendall(request_body)
             data = self.recvall(self.socket)
             code = int(self.get_code(data))
