@@ -47,6 +47,7 @@ class HTTPClient(object):
         return host, port
 
     def connect(self, host, port):
+        print("host: %s\n"%host)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect((host, port))
         return None
@@ -88,7 +89,7 @@ class HTTPClient(object):
 
         try:
             self.connect(host, port)
-            request_body = ('GET %s HTTP/1.1\r\nHost: %s \r\n\r\n'%(path, host))
+            request_body = ('GET %s HTTP/1.1\r\nHost: %s \r\nConnection: close\r\n\r\n'%(path, host))
             self.sendall(request_body)
             data = self.recvall(self.socket)
             code = int(self.get_code(data))
@@ -111,7 +112,7 @@ class HTTPClient(object):
             self.connect(host, port)
             if args is not None:
                 var_arg = urlencode(args)
-            request_body = ('POST %s HTTP/1.1\r\nHost: %s \r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length:%s\r\n\r\n%s'%(path, host, str(len(var_arg)),var_arg))
+            request_body = ('POST %s HTTP/1.1\r\nHost: %s \r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length:%s\r\nConnection: close\r\n\r\n%s'%(path, host, str(len(var_arg)),var_arg))
             self.sendall(request_body)
             data = self.recvall(self.socket)
             code = int(self.get_code(data))
