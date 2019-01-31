@@ -57,11 +57,19 @@ class HTTPClient(object):
         return code
 
     def get_headers(self,data):
-        return None
+        headers = data.split('\r\n\r\n')[0]
+        return headers
 
     def get_body(self, data):
         body = data.split('\r\n\r\n')[1]
         return body
+
+    def get_path(self, url):
+        path = url.replace(urlparse(url).scheme+"://"+urlparse(url).netloc,"")
+        if len(path) == 0:
+            path = "/"
+
+        return path
     
     def sendall(self, data):
         self.socket.sendall(data.encode('utf-8'))
@@ -83,9 +91,7 @@ class HTTPClient(object):
 
     def GET(self, url, args=None):
         host, port = self.get_host_port(url)
-        path = url.replace(urlparse(url).scheme+"://"+urlparse(url).netloc,"")
-        if len(path) == 0:
-            path = "/"
+        path = self.get_path(url)
 
         try:
             self.connect(host, port)
@@ -104,9 +110,7 @@ class HTTPClient(object):
     def POST(self, url, args=None):
         var_arg=""
         host, port = self.get_host_port(url)
-        path = url.replace(urlparse(url).scheme+"://"+urlparse(url).netloc,"")
-        if len(path) == 0:
-            path = "/"
+        path = self.get_path(url)
 
         try:
             self.connect(host, port)
