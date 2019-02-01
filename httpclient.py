@@ -112,7 +112,7 @@ class HTTPClient(object):
             code = respons.code
             body = respons.body
             print (code, body)
-            return HTTPResponse(404, e)
+            return respons
 
 
     def POST(self, url, args=None):
