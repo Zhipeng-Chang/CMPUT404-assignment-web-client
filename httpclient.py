@@ -56,6 +56,7 @@ class HTTPClient(object):
 
     def get_code(self, data):
         code = data.splitlines()[0].split(" ")[1]
+        code = int(code)
         return code
 
     def get_headers(self,data):
@@ -100,13 +101,18 @@ class HTTPClient(object):
             request_body = ('GET %s HTTP/1.1\r\nUser-Agent: %s\r\nHost: %s \r\nConnection: close\r\n\r\n'%(path, USER_AGENT, host))
             self.sendall(request_body)
             data = self.recvall(self.socket)
-            code = int(self.get_code(data))
+            code = self.get_code(data)
             body = self.get_body(data)
-            print(data)
+            headers = self.get_headers(data)
+            print(code, headers, body)
             return HTTPResponse(code, body)
 
         except Exception as e:
-            return HTTPResponse(404)
+            respons = HTTPResponse(404, e)
+            code = respons.code
+            body = respons.body
+            print (code, body)
+            return HTTPResponse(404, e)
 
 
     def POST(self, url, args=None):
@@ -116,18 +122,24 @@ class HTTPClient(object):
 
         try:
             self.connect(host, port)
+            print("args: %s\n"%args)
             if args is not None:
                 var_arg = urlencode(args)
             request_body = ('POST %s HTTP/1.1\r\nUser-Agent: %s\r\nHost: %s \r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length:%s\r\nConnection: close\r\n\r\n%s'%(path, USER_AGENT, host, str(len(var_arg)),var_arg))
             self.sendall(request_body)
             data = self.recvall(self.socket)
-            code = int(self.get_code(data))
+            code = self.get_code(data)
             body = self.get_body(data)
-            print(data)
+            headers = self.get_headers(data)
+            print(code, headers, body)
             return HTTPResponse(code, body)
 
         except Exception as e:
-            return HTTPResponse(404)
+            respons = HTTPResponse(404, e)
+            code = respons.code
+            body = respons.body
+            print (code, body)
+            return respons
 
     def command(self, url, command="GET", args=None):
         if (command == "POST"):
