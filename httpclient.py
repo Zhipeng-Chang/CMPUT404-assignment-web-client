@@ -122,7 +122,6 @@ class HTTPClient(object):
 
         try:
             self.connect(host, port)
-            print("args: %s\n"%args)
             if args is not None:
                 var_arg = urlencode(args)
             request_body = ('POST %s HTTP/1.1\r\nUser-Agent: %s\r\nHost: %s \r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length:%s\r\nConnection: close\r\n\r\n%s'%(path, USER_AGENT, host, str(len(var_arg)),var_arg))
