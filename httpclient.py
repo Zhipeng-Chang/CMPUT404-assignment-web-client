@@ -73,6 +73,12 @@ class HTTPClient(object):
             path = "/"
 
         return path
+    def get_args(self, args):
+        var_arg=""
+        if args is not None:
+            var_arg = urlencode(args)
+
+        return var_arg, len(var_arg)
     
     def sendall(self, data):
         self.socket.sendall(data.encode('utf-8'))
@@ -116,15 +122,13 @@ class HTTPClient(object):
 
 
     def POST(self, url, args=None):
-        var_arg=""
         host, port = self.get_host_port(url)
         path = self.get_path(url)
 
         try:
             self.connect(host, port)
-            if args is not None:
-                var_arg = urlencode(args)
-            request_body = ('POST %s HTTP/1.1\r\nUser-Agent: %s\r\nHost: %s \r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length:%s\r\nConnection: close\r\n\r\n%s'%(path, USER_AGENT, host, str(len(var_arg)),var_arg))
+            var_arg, contentLength = self.get_args(args)
+            request_body = ('POST %s HTTP/1.1\r\nUser-Agent: %s\r\nHost: %s \r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length:%s\r\nConnection: close\r\n\r\n%s'%(path, USER_AGENT, host, contentLength,var_arg))
             self.sendall(request_body)
             data = self.recvall(self.socket)
             code = self.get_code(data)
