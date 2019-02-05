@@ -43,6 +43,9 @@ class HTTPClient(object):
         host = parsedUrl.hostname
         port = parsedUrl.port
 
+        if host is None:
+        	raise Exception("Could not resolve host.")
+
         if port is None:
             # Reference: https://eclass.srv.ualberta.ca/pluginfile.php/4549769/mod_resource/content/2/04-HTTP.pdf
             port = 80
@@ -100,49 +103,32 @@ class HTTPClient(object):
 
     def GET(self, url, args=None):
         host, port = self.get_host_port(url)
+        print(host, port)
         path = self.get_path(url)
-
-        try:
-            self.connect(host, port)
-            request_body = ('GET %s HTTP/1.1\r\nUser-Agent: %s\r\nHost: %s \r\nConnection: close\r\n\r\n'%(path, USER_AGENT, host))
-            self.sendall(request_body)
-            data = self.recvall(self.socket)
-            code = self.get_code(data)
-            body = self.get_body(data)
-            headers = self.get_headers(data)
-            print(code, headers, body)
-            return HTTPResponse(code, body)
-
-        except Exception as e:
-            respons = HTTPResponse(404, e)
-            code = respons.code
-            body = respons.body
-            print (code, body)
-            return respons
-
+        self.connect(host, port)
+        request_body = ('GET %s HTTP/1.1\r\nUser-Agent: %s\r\nHost: %s \r\nConnection: close\r\n\r\n'%(path, USER_AGENT, host))
+        self.sendall(request_body)
+        data = self.recvall(self.socket)
+        code = self.get_code(data)
+        body = self.get_body(data)
+        headers = self.get_headers(data)
+        print(code, headers, body)
+        return HTTPResponse(code, body)
 
     def POST(self, url, args=None):
         host, port = self.get_host_port(url)
         path = self.get_path(url)
+        self.connect(host, port)
+        var_arg, contentLength = self.get_args(args)
+        request_body = ('POST %s HTTP/1.1\r\nUser-Agent: %s\r\nHost: %s \r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length:%s\r\nConnection: close\r\n\r\n%s'%(path, USER_AGENT, host, contentLength,var_arg))
+        self.sendall(request_body)
+        data = self.recvall(self.socket)
+        code = self.get_code(data)
+        body = self.get_body(data)
+        headers = self.get_headers(data)
+        print(code, headers, body)
+        return HTTPResponse(code, body)
 
-        try:
-            self.connect(host, port)
-            var_arg, contentLength = self.get_args(args)
-            request_body = ('POST %s HTTP/1.1\r\nUser-Agent: %s\r\nHost: %s \r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length:%s\r\nConnection: close\r\n\r\n%s'%(path, USER_AGENT, host, contentLength,var_arg))
-            self.sendall(request_body)
-            data = self.recvall(self.socket)
-            code = self.get_code(data)
-            body = self.get_body(data)
-            headers = self.get_headers(data)
-            print(code, headers, body)
-            return HTTPResponse(code, body)
-
-        except Exception as e:
-            respons = HTTPResponse(404, e)
-            code = respons.code
-            body = respons.body
-            print (code, body)
-            return respons
 
     def command(self, url, command="GET", args=None):
         if (command == "POST"):
