@@ -103,7 +103,6 @@ class HTTPClient(object):
 
     def GET(self, url, args=None):
         host, port = self.get_host_port(url)
-        print(host, port)
         path = self.get_path(url)
         self.connect(host, port)
         request_body = ('GET %s HTTP/1.1\r\nUser-Agent: %s\r\nHost: %s \r\nConnection: close\r\n\r\n'%(path, USER_AGENT, host))
@@ -112,7 +111,7 @@ class HTTPClient(object):
         code = self.get_code(data)
         body = self.get_body(data)
         headers = self.get_headers(data)
-        print(code, headers, body)
+        print(body)
         return HTTPResponse(code, body)
 
     def POST(self, url, args=None):
@@ -126,7 +125,7 @@ class HTTPClient(object):
         code = self.get_code(data)
         body = self.get_body(data)
         headers = self.get_headers(data)
-        print(code, headers, body)
+        print(body)
         return HTTPResponse(code, body)
 
 
