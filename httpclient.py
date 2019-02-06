@@ -67,7 +67,8 @@ class HTTPClient(object):
         return headers
 
     def get_body(self, data):
-        body = data.split('\r\n\r\n')[1]
+        headers = self.get_headers(data)
+        body = data.replace(headers+"\r\n\r\n","")
         return body
 
     def get_path(self, url):
