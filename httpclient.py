@@ -44,7 +44,7 @@ class HTTPClient(object):
         port = parsedUrl.port
 
         if host is None:
-	    raise Exception("Could not resolve host.")
+            raise Exception("Could not resolve host.")
 
         if port is None:
             # Reference: https://eclass.srv.ualberta.ca/pluginfile.php/4549769/mod_resource/content/2/04-HTTP.pdf
